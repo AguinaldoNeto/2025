@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static java.util.Objects.isNull;
-
 @RestController
 @RequestMapping("/api/person")
 public class PersonController {
@@ -23,19 +21,34 @@ public class PersonController {
 
     @PostMapping
     public ResponseEntity<Person> createPerson(@RequestBody PersonDTO personDTO) {
-        Person createdPerson  = personService.createPerson(personDTO);
-        if (isNull(createdPerson))
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
+        Person createdPerson  = personService.create(personDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPerson);
     }
 
-
     @GetMapping
-    public ResponseEntity<List<Person>> findAll() {
-        List<Person> personsList = personService.getAllPersons();
-
-        return ResponseEntity.ok(personsList);
+    public ResponseEntity<List<Person>> findAllPersons() {
+        List<Person> personsList = personService.getAll();
+        return ResponseEntity.ok().body(personsList);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Person> findPersonById(@PathVariable("id") Long id) {
+        Person personFounded = personService.findById(id);
+        return ResponseEntity.ok().body(personFounded);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Person> updatePerson(@PathVariable("id") Long id, @RequestBody PersonDTO personDTO) {
+        Person person = personService.update(id, personDTO);
+        return ResponseEntity.ok().body(person);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Person> deletePerson(@PathVariable("id") Long id) {
+        personService.delete(id);
+
+        return ResponseEntity.noContent().build();
+    }
+
 
 }

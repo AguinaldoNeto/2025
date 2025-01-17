@@ -18,7 +18,7 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public Person createPerson(PersonDTO personDTO) {
+    public Person create(PersonDTO personDTO) {
         Person person = new Person();
         person.setFirstName(personDTO.getFirstName());
         person.setLastName(personDTO.getLastName());
@@ -30,8 +30,36 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public List<Person> getAllPersons() {
+    public Person findById(Long id) {
+        return personRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("O ID não foi encontrado. Insira um ID válido."));
+    }
+
+    @Override
+    public List<Person> getAll() {
         return personRepository.findAll();
+    }
+
+    @Override
+    public Person update(Long id, PersonDTO personDTO) {
+        Person foundedPerson  = personRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("O ID não foi encontrado. Insira um ID válido."));;
+
+        foundedPerson.setFirstName(personDTO.getFirstName());
+        foundedPerson.setLastName(personDTO.getLastName());
+        foundedPerson.setEmail(personDTO.getEmail());
+        foundedPerson.setPhoneNumber(personDTO.getPhoneNumber());
+        foundedPerson.setDateOfBirth(personDTO.getDateOfBirth());
+
+        return personRepository.save(foundedPerson);
+    }
+
+    @Override
+    public void delete(Long id) {
+        Person foundedPersonId = personRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("O ID não foi encontrado. Insira um ID válido."));
+
+        personRepository.delete(foundedPersonId);
     }
 
 
